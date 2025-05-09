@@ -11,6 +11,8 @@ router.post("/login", async function (req, res, next) {
   try {
     const { username, password } = req.body;
 
+    
+
     const user = await userModel.findOne({ username });
     if (!user) {
       return res.status(400).json({
@@ -28,13 +30,23 @@ router.post("/login", async function (req, res, next) {
       });
     }
 
+    const JWT_SECRET = process.env.JWT_SECRET
+    const token = jwt.sign(
+      { userId: user._id, username: user.username, approve: user.approve },
+      JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+
     if (!user.approve) {
       return res.status(200).json({
         status: "200",
-        message: `Login Successful but approve is not yet`,
+        message: `Login Successful waiting for aprove `,
         data: {
           username: user.username,
+          User_ID:user._id,
           approve: user.approve,
+          token:token
         },
       });
     }
@@ -48,13 +60,6 @@ router.post("/login", async function (req, res, next) {
         productName: item.product?.name,
         quantity: item.quantity,
       }))
-    );
-
-    const JWT_SECRET = process.env.JWT_SECRET
-    const token = jwt.sign(
-      { userId: user._id, username: user.username, approve: user.approve },
-      JWT_SECRET,
-      { expiresIn: "1d" }
     );
 
     return res.status(200).json({

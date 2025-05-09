@@ -8,10 +8,7 @@
 
 
   router.get("/",[tokenMiddleware], async function (req, res, next) {
-    try {
-      const {userId} = req.body
-      const user = await userModel.find(userId)
-
+    try {      
       const products = await productModel.find({});
       return res.status(200).json({
         status: "200",
