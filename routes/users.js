@@ -6,7 +6,7 @@ const adminMiddleware = require("../middleware/admin.middleware");
 const tokenMiddleware = require("../middleware/token.middleware");
 
 /* GET users listing. */
-router.get("/list", async function (req, res, next) {
+router.get("/list",[tokenMiddleware,adminMiddleware], async function (req, res, next) {
   try {
     const users = await userModel.find({});
 

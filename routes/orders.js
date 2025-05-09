@@ -6,8 +6,6 @@ const tokenMiddleware = require("../middleware/token.middleware");
 
 router.get("/", [tokenMiddleware], async function (req, res, next) {
   try {
-    cosnt 
-
     const orders = await orderModel
       .find({})
       .populate("user", "username _id")
