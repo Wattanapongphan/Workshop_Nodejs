@@ -11,8 +11,6 @@ router.post("/login", async function (req, res, next) {
   try {
     const { username, password } = req.body;
 
-    
-
     const user = await userModel.findOne({ username });
     if (!user) {
       return res.status(400).json({
@@ -30,23 +28,22 @@ router.post("/login", async function (req, res, next) {
       });
     }
 
-    const JWT_SECRET = process.env.JWT_SECRET
+    const JWT_SECRET = process.env.JWT_SECRET;
     const token = jwt.sign(
-      { userId: user._id, username: user.username, approve: user.approve },
+      { userId: user._id, username: user.username, approve: user.approve ,role: user.role},
       JWT_SECRET,
       { expiresIn: "1d" }
     );
 
-
     if (!user.approve) {
       return res.status(200).json({
         status: "200",
-        message: `Login Successful waiting for aprove `,
+        message: `Login Successful waiting for approve `,
         data: {
           username: user.username,
-          User_ID:user._id,
+          User_ID: user._id,
           approve: user.approve,
-          token:token
+          token: token,
         },
       });
     }
@@ -68,7 +65,7 @@ router.post("/login", async function (req, res, next) {
       data: {
         username: user.username,
         approve: user.approve,
-        token:token
+        token: token,
       },
       order: formattedOrders,
     });
