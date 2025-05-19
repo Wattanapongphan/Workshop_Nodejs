@@ -9,7 +9,7 @@ var userModel = require("../models/user");
 
 router.post("/login", async function (req, res, next) {
   try {
-    const { username, password } = req.body;
+    const { username, password, role } = req.body;
 
     const user = await userModel.findOne({ username });
     if (!user) {
@@ -63,9 +63,11 @@ router.post("/login", async function (req, res, next) {
       status: "200",
       message: "Login successful",
       data: {
+        userId: user._id,
         username: user.username,
         approve: user.approve,
         token: token,
+        role: user.role
       },
       order: formattedOrders,
     });

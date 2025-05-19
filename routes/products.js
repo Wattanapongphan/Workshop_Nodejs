@@ -6,7 +6,7 @@ const orderModel = require("../models/order");
 const tokenMiddleware = require("../middleware/token.middleware");
 const adminMiddleware = require("../middleware/admin.middleware")
 
-router.get("/", [tokenMiddleware], async function (req, res, next) {
+router.get("/",  async function (req, res, next) {
   try {
     const products = await productModel.find({});
     return res.status(200).json({
@@ -22,9 +22,9 @@ router.get("/", [tokenMiddleware], async function (req, res, next) {
     });
   }
 });
-router.post("/", [tokenMiddleware,adminMiddleware], async function (req, res, next) {
+router.post("/", async function (req, res, next) { // [tokenMiddleware,adminMiddleware]
   try {
-    const { name, price, stock } = req.body;
+    const { name, price, stock, image } = req.body;
 
     const existingProduct = await productModel.findOne({ name });
     if (existingProduct) {
@@ -38,6 +38,7 @@ router.post("/", [tokenMiddleware,adminMiddleware], async function (req, res, ne
       name,
       price,
       stock,
+      image
     });
 
     const product = await newProduct.save();
@@ -55,14 +56,14 @@ router.post("/", [tokenMiddleware,adminMiddleware], async function (req, res, ne
     });
   }
 });
-router.put("/:id", [tokenMiddleware,adminMiddleware], async function (req, res, next) {
+router.put("/:id", async function (req, res, next) { //[tokenMiddleware,adminMiddleware]
   try {
-    const { name, price, stock } = req.body;
+    const { name, price, stock, image } = req.body;
     const { id } = req.params;
 
     const product = await productModel.findByIdAndUpdate(
       id,
-      { name, price, stock },
+      { name, price, stock, image },
       { new: true }
     );
 
@@ -80,9 +81,9 @@ router.put("/:id", [tokenMiddleware,adminMiddleware], async function (req, res, 
   }
 });
 
-router.delete("/:id", [tokenMiddleware,adminMiddleware], async function (req, res, next) {
+router.delete("/:id", async function (req, res, next) { // [tokenMiddleware,adminMiddleware]
   try {
-    const { id } = req.params;
+    const { id } = req.params; 
 
     const product = await productModel.findByIdAndDelete(id);
 
@@ -158,7 +159,8 @@ router.get("/:id/orders", [tokenMiddleware], async function (req, res, next) {
 router.post("/:id/orders", [tokenMiddleware], async function (req, res, next) {
   try {
     const productId = req.params.id;
-    const { userId, quantity } = req.body;
+    const { quantity } = req.body;
+    const userId = req.user.userId; // ✅ ดึงจาก token
 
     const product = await productModel.findById(productId);
     if (!product) {
@@ -204,7 +206,7 @@ router.post("/:id/orders", [tokenMiddleware], async function (req, res, next) {
 
     return res.status(201).json({
       status: "201",
-      message: "Order create Successful",
+      message: "Order created successfully",
       data: order,
     });
   } catch (error) {

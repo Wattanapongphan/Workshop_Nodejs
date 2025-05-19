@@ -5,7 +5,7 @@ const userModel = new Schema(
   {
     username: { type: String, required: true },
     password: { type: String, required: true },
-    approve: { type: Boolean, default: false },
+    approve: { type: Boolean, default: true },
     role: { type: String, enum: ["user", "admin"], default: "user" }
   },
   {

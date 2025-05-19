@@ -11,9 +11,16 @@ const orderModel = new Schema(
           ref: "Product",
           required: true,
         },
+        name: { type: String, required: true },
         quantity: { type: Number, required: true },
       },
     ],
+    totalPrice: { type: Number, required: true },
+    status: {
+      type: String,
+      enum: ["pending", "paid", "shipped", "delivered", "cancelled"],
+      default: "pending",
+    },
   },
   {
     timestamps: true,
